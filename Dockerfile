@@ -20,8 +20,6 @@ RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-# پورت پیش‌فرض کانتینر
-EXPOSE 443
-
 # اجرای start.sh
 CMD ["./start.sh"]
+# خط EXPOSE حذف شد چون PORT توسط Render تعیین می‌شود.
