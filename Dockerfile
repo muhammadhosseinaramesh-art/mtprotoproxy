@@ -1,31 +1,27 @@
-# استفاده از Python سبک
+# Base Image سبک Python
 FROM python:3.11-slim
 
-# پوشه کاری داخل کانتینر
+# پوشه کاری
 WORKDIR /app
 
-# نصب ابزارهای لازم
+# نصب ابزارهای لازم برای ساخت و cryptography
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libssl-dev build-essential && \
+    apt-get install -y gcc libssl-dev build-essential && \
+    pip install --no-cache-dir cryptography && \
     rm -rf /var/lib/apt/lists/*
 
-# کپی سورس پروژه به کانتینر
+# کپی سورس پروژه
 COPY . /app
 
-# اگر فایل requirements.txt وجود دارد، پکیج‌ها را نصب کن
+# نصب پکیج‌های مورد نیاز در صورت وجود requirements.txt
 RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
 
-# کپی اسکریپت شروع پروکسی
+# کپی و آماده‌سازی start.sh
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-# پورت کانتینر (برای Render روی 443)
+# پورت پیش‌فرض کانتینر
 EXPOSE 443
 
-# تنظیم Environment Variables با کوتیشن
-ENV PORT="443"
-ENV SECRET="7hYDAQIAAQAB_AMDhuJMOt1tZWRpYS5zdGVhbXBvd2VyZWQuY29t"
-ENV AD_TAG="9f1b2c3d4e5f60718293a4b5c6d7e8f0"
-
-# دستور اجرای کانتینر
+# اجرای start.sh
 CMD ["./start.sh"]
