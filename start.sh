@@ -10,7 +10,7 @@ if [ -z "$CLEAN_SECRET" ] || [ ${#CLEAN_SECRET} -ne 64 ] || [[ ! $CLEAN_SECRET =
   exit 1
 fi
 
-# ===== اعتبارسنجی AD_TAG (مثلاً خالی نباشد) =====
+# ===== اعتبارسنجی AD_TAG =====
 if [ -z "$AD_TAG" ]; then
   echo "ERROR: AD_TAG نمی‌تواند خالی باشد."
   exit 1
@@ -19,12 +19,28 @@ fi
 # ===== متغیرها را صادر کن =====
 export SECRET="$CLEAN_SECRET"
 export AD_TAG="$AD_TAG"
-# مقدار پیش‌فرض 8080 برای تست لوکال، در Render PORT توسط سیستم تعیین می‌شود.
 export PORT="${PORT:-8080}"
 export HOST="${HOST:-0.0.0.0}"
 
-echo "Starting MTProto Proxy..."
+echo "Starting MTProto Proxy and HTTP Health Check..."
 echo "HOST=$HOST, PORT=$PORT, AD_TAG=$AD_TAG"
 
-# ===== اجرای پروکسی =====
-exec python3 -u mtprotoproxy.py
+# ===== اجرای پروکسی MTProto در پس‌زمینه =====
+python3 -u mtprotoproxy.py > proxy.log 2>&1 &
+PROXY_PID=$!
+
+# ===== اجرای یک سرور HTTP ساده برای Render Health Check =====
+cd /tmp && echo 'OK' > health.html
+python3 -m http.server "$PORT" --bind "$HOST" --directory /tmp > health.log 2>&1 &
+HEALTH_PID=$!
+
+echo "MTProto Proxy PID: $PROXY_PID"
+echo "HTTP Health Check PID: $HEALTH_PID"
+
+# ===== منتظر ماندن تا یکی از فرآیندها متوقف شود =====
+wait -n
+# اگر یکی متوقف شد، بقیه را هم kill کن
+kill $PROXY_PID $HEALTH_PID 2>/dev/null || true
+wait $PROXY_PID $HEALTH_PID 2>/dev/null || true
+echo "One of the processes has exited."
+exit 1
