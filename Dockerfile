@@ -25,7 +25,8 @@ EXPOSE 443
 # تنظیم Environment Variables با کوتیشن
 ENV PORT="443"
 ENV SECRET="0123456789abcdef0123456789abcdef"
-ENV AD_TAG="PLACEHOLDER"
+ENV AD_TAG="9f1b2c3d4e5f60718293a4b5c6d7e8f0"
+
 
 # دستور اجرای کانتینر
 CMD ["./start.sh"]
