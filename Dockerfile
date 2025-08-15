@@ -4,7 +4,7 @@ FROM python:3.11-slim
 # پوشه کاری داخل کانتینر
 WORKDIR /app
 
-# نصب ابزارهای لازم برای ساخت
+# نصب ابزارهای لازم
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc libssl-dev build-essential && \
     rm -rf /var/lib/apt/lists/*
@@ -24,9 +24,8 @@ EXPOSE 443
 
 # تنظیم Environment Variables با کوتیشن
 ENV PORT="443"
-ENV SECRET=PLACEHOLDER
-ENV AD_TAG="9f1b2c3d4e5f60718293a4b5c6d7e8f0"
-
+ENV SECRET="7hYDAQIAAQAB_AMDhuJMOt1tZWRpYS5zdGVhbXBvd2VyZWQuY29t"
+ENV AD_TAG="zoroastriann"
 
 # دستور اجرای کانتینر
 CMD ["./start.sh"]
