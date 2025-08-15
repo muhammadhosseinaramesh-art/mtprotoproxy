@@ -20,7 +20,7 @@ EXPOSE 443
 
 # مقادیر پیش‌فرض (بعداً در Render به‌روزرسانی‌ می‌کنیم)
 ENV PORT=443
-ENV SECRET=0123456789abcdef0123456789abcdef
-ENV AD_TAG=PLACEHOLDER
+ENV SECRET=""
+ENV AD_TAG="PLACEHOLDER"
 
 CMD ["./start.sh"]
